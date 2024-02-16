@@ -3,6 +3,7 @@ const cors = require('cors');
 const { ApolloServer } = require ('@apollo/server');
 const { expressMiddleware } = require('@apollo/server');
 const path = require('path');
+const morgan = require('morgan');
 
 const db = require('./config/connection');
 
@@ -22,6 +23,13 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+morgan.token('host', function(req, res) {
+    console.log(`Hostname: ${req.hostname}`);
+    return req.hostname;
+});
+
+app.use(morgan(':method :host :status'));
+
 app.use((req, res, next) => {
     console.log(`Request received on ${PORT}`);
     next();
@@ -31,6 +39,8 @@ app.get('/', (req, res) => {
     res.send('Testing server successful!')
 })
 
-app.listen(PORT, () => {
-    console.log(`Server running and listening on ${PORT}`);
+db.once('open', () => {
+    app.listen(PORT, () => {
+        console.log(`Server running and listening on ${PORT}`);
+    });
 });
