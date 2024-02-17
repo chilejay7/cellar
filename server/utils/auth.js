@@ -33,6 +33,10 @@ module.exports = {
             return req;
         }
 
+        // If a token is found it will try to verify using the jwt.verify method.
+        // If successfully verified, the user data is extracted from the token payload and is attached to the req.user property.
+        // If invalid or verification fails, the error is caught and logged to the console.
+        // After verification, the user information is attached to the request object so that it can be further processed downstream by middleware or routes.
         try {
             const { data } = jwt.verify(token, secret, { maxAge: expiration });
             req.user = data;
@@ -43,6 +47,11 @@ module.exports = {
         return req;
     },
 
+    // This function generates a JSON Web Token based on the provided username and _id.
+    // A payload object containing the username and _id is created.
+    // The jwt sign method is used to generate the JWT.  The first argument is the payload object.  The second is the secret key used to sign the token.  The third
+    // argument is the an options object used to specify addtional configurations.  In this case it's used to set the expiration time.
+    // The token string is returned after generating the token.
     signToken: function ({ username, _id }) {
         const payload = { username, _id };
         return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
