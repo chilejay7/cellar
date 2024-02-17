@@ -10,6 +10,8 @@ const db = require('./config/connection');
 const PORT = process.env.PORT || 7075;
 const app = express();
 
+const { authMiddleware } = require('./utils/auth');
+
 app.use(cors({
     credentials: true,
     origin: [
